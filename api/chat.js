@@ -24,8 +24,6 @@ export default async function handler(req, res) {
     });
 
     const apiKey = process.env.GEMINI_API_KEY;
-
-    // Try models in order until one works
     const models = [
       'gemini-2.5-flash-preview-04-17',
       'gemini-2.5-flash',
@@ -42,7 +40,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           system_instruction: { parts: [{ text: system }] },
           contents,
-          generationConfig: { maxOutputTokens: 1000, temperature: 0.7 }
+          generationConfig: { maxOutputTokens: 8192, temperature: 0.7 }
         })
       });
 
@@ -54,7 +52,6 @@ export default async function handler(req, res) {
       }
 
       lastError = data;
-      // If not 404/429, don't bother trying other models
       if (response.status !== 404 && response.status !== 429) break;
     }
 
